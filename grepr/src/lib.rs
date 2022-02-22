@@ -4,6 +4,7 @@ use std::{
     error::Error,
     fs::{self, File},
     io::{self, BufRead, BufReader},
+    mem,
 };
 use walkdir::{DirEntry, WalkDir};
 
@@ -161,14 +162,9 @@ fn find_lines<T: BufRead>(
             break;
         }
 
-        let line = buffer.clone();
-
-        if invert_match {
-            if !pattern.is_match(&line) {
-                results.push(line);
-            }
-        } else if pattern.is_match(&line) {
-            results.push(line);
+        if pattern.is_match(&buffer) ^ invert_match {
+            // BitXor bit-wise exclusive OR operation
+            results.push(mem::take(&mut buffer)) // take ownership of the buffer instead of cloning
         }
 
         buffer.clear();
