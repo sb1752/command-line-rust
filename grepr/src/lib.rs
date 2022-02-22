@@ -84,7 +84,14 @@ pub fn get_args() -> MyResult<Config> {
 
 pub fn run(config: Config) -> MyResult<()> {
     let entries = find_files(&config.files, config.recursive);
-    let show_paths: bool = entries.len() > 1;
+    let num_files = entries.len();
+    let print = |fname: &str, val: &str| {
+        if num_files > 1 {
+            print!("{}:{}", fname, val);
+        } else {
+            print!("{}", val);
+        }
+    };
 
     for entry in entries {
         match entry {
@@ -94,17 +101,10 @@ pub fn run(config: Config) -> MyResult<()> {
                 Ok(file) => {
                     let matches = find_lines(file, &config.pattern, config.invert_match)?;
                     if config.count {
-                        if show_paths {
-                            println!("{}:{}", filepath, matches.len());
-                        } else {
-                            println!("{}", matches.len());
-                        }
+                        print(&filepath, &format!("{}\n", matches.len()));
                     } else {
-                        for line in matches {
-                            if show_paths {
-                                print!("{}:", filepath);
-                            }
-                            print!("{}", line);
+                        for line in &matches {
+                            print(&filepath, line);
                         }
                     }
                 }
