@@ -139,19 +139,19 @@ fn format_month(year: i32, month: u32, print_year: bool, today: NaiveDate) -> Ve
     if print_year {
         heading = format!("{} {}", month_name, year);
     } else {
-        heading = month_name.to_string();
+        heading = month_name.to_owned();
     }
     display.push(format!("{:^20}  ", heading));
 
     // Days of the week
-    display.push("Su Mo Tu We Th Fr Sa  ".to_string());
+    display.push("Su Mo Tu We Th Fr Sa  ".to_owned());
 
     // Iterate over 6 rows of 7 columns each and print out calendar days that match days of the week
     let mut starting_day = 1;
     let mut date_opt = NaiveDate::from_ymd_opt(year, month, starting_day);
     let mut weekday_num;
 
-    for week in 1..=6 {
+    for _ in 1..=6 {
         let mut weekdays = vec![];
 
         for day in 1..=7 {
@@ -164,7 +164,7 @@ fn format_month(year: i32, month: u32, print_year: bool, today: NaiveDate) -> Ve
                         weekdays.push(format!("{:2}", ""));
                     } else {
                         if today == date {
-                            let style = weekdays.push(
+                            weekdays.push(
                                 Style::new()
                                     .reverse()
                                     .paint(starting_day.to_string())
